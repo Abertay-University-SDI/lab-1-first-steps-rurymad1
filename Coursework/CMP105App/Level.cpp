@@ -1,15 +1,28 @@
 #include "Level.h"
 
+void Level::spawnFood()
+{
+	float x = rand() % m_window.getSize().x;
+	float y = rand() % m_window.getSize().y;
+	m_food.setPosition({ x, y });
+}
+
 Level::Level(sf::RenderWindow& hwnd, Input& in) :
 	BaseLevel(hwnd, in)
 {
-	m_player.setRadius(50.f);
+	m_player.setRadius(20.f);
 	m_player.setFillColor(sf::Color::Green);
 	m_player.setPosition({ 300,300 });
+
+	m_food.setRadius(10.f);
+	m_food.setFillColor(sf::Color::Red);
+	spawnFood();
 
 	// initialise game objects
 
 }
+
+
 
 // handle user input
 void Level::handleInput(float dt)
@@ -44,6 +57,8 @@ void Level::handleInput(float dt)
 // Update game objects
 void Level::update(float dt)
 {
+	if (m_GameOver) return; 
+
 	switch (m_cDirection) {
 
 		case cDirection::Left: {
@@ -76,8 +91,17 @@ void Level::update(float dt)
 		std::cout << "outside" << std::endl;
 
 		m_player.setPosition({ Border.x * 0.5f,Border.y * 0.5f });
-		
+	}
 
+	float xDistance = (Position.x + Radius) - (m_food.getPosition().x + m_food.getRadius());
+	float YDistance = (Position.y + Radius) - (m_food.getPosition().y + m_food.getRadius());
+
+	float SquaredDistance = (xDistance * xDistance) + (YDistance * YDistance);
+	float RadiusSum = Radius + m_food.getRadius();
+	if (SquaredDistance < RadiusSum * RadiusSum)
+	{
+		spawnFood();
+		m_speed = m_speed*1.1f;
 	}
 
 }
@@ -87,6 +111,7 @@ void Level::render()
 {
 	beginDraw();
 	m_window.draw(m_player);
+	m_window.draw(m_food);
 
 
 	endDraw();

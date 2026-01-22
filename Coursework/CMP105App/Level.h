@@ -16,8 +16,12 @@ public:
 private:
 	enum class cDirection { Left, Right, Up, Down };
 	cDirection m_cDirection;
+	void spawnFood();
 	sf::CircleShape m_player;
+	sf::CircleShape m_food;
 	float m_speed = 200.f;
+	bool m_GameOver = false;
+	
 	// Default functions for rendering to the screen.
 
 	// Default variables for level class.
